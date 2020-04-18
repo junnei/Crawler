@@ -51,7 +51,7 @@ def linkToPage(Challenge):
  
     driver.implicitly_wait(10) # 로딩 최대 10초 기다리기
 
-    sleep(10) # 이메일을 받기 위한 대기 시간 (초)
+    sleep(30) # 이메일을 받기 위한 대기 시간 (초)
 
     # 이메일 확인
     driver.get(GMAIL) # Gmail 이동
