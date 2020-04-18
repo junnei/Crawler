@@ -2,6 +2,11 @@
 
 Nomad Coder Web Crawler including email crawling
 
+
+(구글 이메일 기준)
+
+아이디와 비밀번호를 입력하면 자동으로 Nomad Coder 챌린지 경과가 크롤링되는 프로그램입니다!
+
 <img width="785" alt="image" src="https://user-images.githubusercontent.com/41983244/79634559-124fdf00-81a6-11ea-84da-385764a77ed1.png">
 
 
