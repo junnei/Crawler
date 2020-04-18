@@ -44,9 +44,17 @@ selenium
  : python3 -m pip install {모듈이름} --user
 
 
+# 시간 조정 가능
 
-# IDE
-VSCode
+작업이 너무 오래 걸려서 지루하시거나, 이메일이 너무 늦게 와서 작업이 어렵다고요 ?
+
+걱정마세요 ! 대기시간도 바꿀 수 있습니다
+
+(Line 54)
+
+Sleep(30)
+
+#초 단위로 원하는만큼 조정해주세요!
 
 
 
@@ -59,14 +67,19 @@ VSCode
 
 CHALLENGE = 5
 
-# 시간 조정 가능
+1 : Kokoa Clone Challenge
 
-작업이 너무 늦어서 지루하시거나, 이메일이 너무 늦게 와서 작업이 어렵다고요 ?
+2 : ReactJS Challenge
 
-걱정마세요 ! 대기시간도 바꿀 수 있습니다
+3 : WeTube Clone Challenge
 
-(Line 54)
+4 : VanillaJS Challenge
 
-#초 단위로 원하는만큼 조정해주세요!
+5 : Python Challenge
 
-Sleep(30)
+
+
+# 사용 IDE
+
+
+VSCode
