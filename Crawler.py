@@ -75,6 +75,7 @@ def linkToPage(Challenge):
         if (title == "Log in Nomad Challenges"):
             body = email.find("span",{"class":"y2"}).get_text()
             LOGIN_URL = body[body.find(':')+2:body.find('on your browser.')]
+            break
     
     
     # 로그인 URL로 이동하기
