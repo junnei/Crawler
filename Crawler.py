@@ -57,11 +57,11 @@ def linkToPage(Challenge):
     driver.get(GMAIL) # Gmail 이동
     driver.find_element_by_name('identifier').send_keys(EMAIL_ADDRESS) # 주소 입력
     driver.find_element_by_id('identifierNext').click() # 다음버튼
-    driver.implicitly_wait(3) # 로딩 최대 3초 기다리기
+    driver.implicitly_wait(5) # 로딩 최대 5초 기다리기
 
     driver.find_element_by_name('password').send_keys(PASSWORD) # 비밀번호 입력
     driver.find_element_by_id('passwordNext').click() # 다음버튼
-    driver.implicitly_wait(3) # 로딩 최대 3초 기다리기
+    driver.implicitly_wait(5) # 로딩 최대 5초 기다리기
 
     # 받은편지함 나올때 까지 최대 10초 대기.
     WebDriverWait(driver, 10).until(EC.title_contains(('받은편지함')))
@@ -75,7 +75,7 @@ def linkToPage(Challenge):
         if (title == "Log in Nomad Challenges"):
             body = email.find("span",{"class":"y2"}).get_text()
             LOGIN_URL = body[body.find(':')+2:body.find('on your browser.')]
-    
+            break
     
     # 로그인 URL로 이동하기
     driver.get(LOGIN_URL)
@@ -120,14 +120,16 @@ def printList():
                     fail[j-1] = fail[j-1] + 1
                 print(f"{data[i][j]}",end="")
         print("\n")
+    print(f"Total : {MAX}")
     print(f"Survivors : {len(data)}")
-    print(f"Participants : {participants}")
-    print(f"Today's 🔪💨 : {participants-len(data)}")
-    print(f"Today's Survivors Rate : {round(len(data)/participants*100)}%\n")
     print(f"Total 🔪💨 : {MAX-len(data)}")
     print(f"Total Survivors Rate : {round(len(data)/MAX*100)}%\n")
 
-    print(f"Failure in Assignment (from only Survivors) - ")
+    print(f"People in List : {participants}")
+    print(f"List's 🔪💨 : {participants-len(data)}")
+    print(f"List's Survivors Rate : {round(len(data)/participants*100)}%\n")
+
+    print(f"Failure in Assignment (from only Survivors) [First Absent]- ")
     for i in range(len(fail)):
         print(f"\tAssignment {i+1} : {fail[i]} \tFailure Rate (Failure/Survivors) : {round(fail[i]/len(data)*100)}%")
 
@@ -135,9 +137,10 @@ def checkList():
     id=input("\nInput ID : ")
     for i in range(len(data)):
         if(data[i][0]==id):
-            print(f"{data[i][0]}님 Progress -")
+            print(f"\n{data[i][0]}님 Progress -")
             for j in range(1,len(data[i])):
                 print(f"\tAssignment {j} : {data[i][j]}")
+    print()
 
 SetLogin()
 html = linkToPage(CHALLENGE)
