@@ -1,4 +1,6 @@
 import os
+import csv
+import datetime
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -25,6 +27,11 @@ CHALLENGE = 4
 # 파이썬 챌린지 : 598
 # JS 챌린지 : 784
 MAX = 784
+
+# 챌린지 시작 날짜
+# 파이썬 챌린지 : 2020년 4월 13일 6시
+# JS 챌린지 : 2020년 4월 20일 6시
+DATE = datetime.datetime(2020, 4, 20, 6)
 
 # 현재 참가자 수
 participants=0
@@ -198,6 +205,37 @@ def printList():
     for i in range(len(fail)):
         print(f"\tAssignment {i+1} : {fail[i]} \tFailure Rate (Failure/Survivors) : {round(fail[i]/len(data)*100)}%")
 
+def cvsPrint():
+
+    #time = datetime.datetime.now()
+    #days = (time-DATE).days+1
+
+    # csv 파일 출력
+    try:
+        f = open(f"result{CHALLENGE}.csv",'r')
+        day = f.readlines()[-1][0]
+        f.close()
+    except:
+        f = open(f"result{CHALLENGE}.csv",'w', newline='')
+        wr = csv.writer(f)
+        wr.writerow(['challenge','date','max_participants'])
+        wr.writerow([CHALLENGE,DATE,MAX])
+        wr.writerow(['day','num','name','assignment'])
+        # 이전 데이터 추출
+        for j in range(1,len(data[0])-1):
+            for i in range(len(data)):
+                wr.writerow([j,i+1,data[i][0],data[i][j]])
+                day = j
+        f.close()
+
+    if( len(data[0]) - 1 > day ):
+        # 오늘자 데이터 추출
+        f = open(f"result{CHALLENGE}.csv",'a', newline='')
+        wr = csv.writer(f)
+        for i in range(len(data)):
+            wr.writerow([len(data[i])-1,i+1,data[i][0],data[i][len(data[i])-1]])
+        f.close()
+
 def checkList():
     id=input("\nInput ID : ")
     for i in range(len(data)):
@@ -212,4 +250,5 @@ excuteDriver()
 sendEmail()
 getData()
 printList()
+cvsPrint()
 checkList()
