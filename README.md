@@ -44,28 +44,39 @@ selenium
  : python3 -m pip install {모듈이름} --user
 
 
-# 시간 조정 가능
+# 업데이트 (2020.04.22)
 
-작업이 너무 오래 걸려서 지루하시거나, 이메일이 너무 늦게 와서 작업이 어렵다고요 ?
+비밀번호 틀렸을 시 비밀번호 재입력 기능.
 
-걱정마세요 ! 대기시간도 바꿀 수 있습니다
+대기시간 없이 메일확인.
 
-(Line 54)
+이메일 올때까지 메일함 재확인.
 
-Sleep(30)
+로그인 성공할 때까지 재실행.
 
-#초 단위로 원하는만큼 조정해주세요!
+각종 예외 처리 수정.
 
+! 오류가 발생할 시에 메일이나 슬랙 메시지 부탁드려요 ! [ peinguin77@gmail.com / Seongjun Jang ]
 
 
 # 범용성
 챌린지 종류에 구분없이 크롤링가능하도록 구현했습니다!
 
-(Line 22)
 
-#파이썬 챌린지
+파이썬 챌린지 -
 
-CHALLENGE = 5
+(Line 22)CHALLENGE = 5
+
+(Line 27)MAX = 598
+
+JS 챌린지 -
+
+(Line 22)CHALLENGE = 4
+
+(Line 27)MAX = 784
+
+
+CHALLENGE NUMBERING -
 
 1 : Kokoa Clone Challenge
 

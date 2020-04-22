@@ -5,11 +5,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from time import sleep
 
 os.system("clear")
 
-GMAIL = "https://www.google.com/gmail/"
+GMAIL = "https://accounts.google.com/signin/v2/identifier?continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&service=mail&sacu=1&rip=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin"
 
 EMAIL_ADDRESS = ""
 PASSWORD = ""
@@ -18,11 +17,14 @@ CHROME_DRIVER = "/Users/jun/Downloads/chromedriver"
 GET_EMAIL_URL = "https://challenges.nomadcoders.co/users/login"
 LOGIN_URL = ""
 
-# 파이썬 챌린지
-CHALLENGE = 5
+# 파이썬 챌린지 : 5
+# JS 챌린지 : 4
+CHALLENGE = 4
 
 # 처음 참가자 수
-MAX = 598
+# 파이썬 챌린지 : 598
+# JS 챌린지 : 784
+MAX = 784
 
 # 현재 참가자 수
 participants=0
@@ -33,6 +35,13 @@ data = []
 # 과제 제출 실패 데이터
 fail = []
 
+# 로그인 성공 여부
+session_Login = False
+
+# 크롬드라이버 선언
+driver = webdriver.chrome.webdriver.WebDriver
+
+# 로그인을 위한 데이터 입력
 def SetLogin():
     print("\t< Gmail Login >")
     global EMAIL_ADDRESS
@@ -40,45 +49,101 @@ def SetLogin():
     EMAIL_ADDRESS = input("email : ")
     PASSWORD = input("password : ")
 
-def linkToPage(Challenge):
+# 크롬드라이버 실행
+def excuteDriver():
+    global driver
     driver = webdriver.Chrome(CHROME_DRIVER)
+
+# 크롤링 데이터 받아오기
+def getData():
+    # 정상적으로 실행될때 까지 반복
+    while len(data)==0:
+        try:
+            html = linkToPage(CHALLENGE)
+            addToList(html)
+        except:
+            continue
+
+# 노마드코더 로그인 이메일 보내기
+def sendEmail():
+    global driver
     driver.implicitly_wait(3) # 로딩 최대 3초 기다리기
 
     # 이메일 받기 위한 작업
     driver.get(GET_EMAIL_URL) # 노마드코더 로그인
     driver.find_element_by_name('email').send_keys(EMAIL_ADDRESS) # 주소 입력
     driver.find_element_by_xpath('/html/body/main/main/div/form/button').click() # 이메일 보내기
- 
-    driver.implicitly_wait(10) # 로딩 최대 10초 기다리기
 
-    sleep(30) # 이메일을 받기 위한 대기 시간 (초)
+# 노마드코더 로그인 이메일 받기
+def getEmail():
+    global LOGIN_URL
+    global driver
+    driver.implicitly_wait(3) # 로딩 최대 3초 기다리기
+    #LOGIN_URL이 존재할때 까지 반복
+    while True:
+        # 로그인 성공한 세션이 있을 경우 바로 메일함으로 이동
+        global session_Login
+        if(session_Login == False):
+            global PASSWORD
+            driver.get(GMAIL) # Gmail 이동
+            driver.find_element_by_name('identifier').send_keys(EMAIL_ADDRESS) # 주소 입력
+            driver.find_element_by_id('identifierNext').click() # 다음버튼
+            WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.NAME, "password"))) # 비밀번호 입력 대기
 
-    # 이메일 확인
-    driver.get(GMAIL) # Gmail 이동
-    driver.find_element_by_name('identifier').send_keys(EMAIL_ADDRESS) # 주소 입력
-    driver.find_element_by_id('identifierNext').click() # 다음버튼
-    driver.implicitly_wait(5) # 로딩 최대 5초 기다리기
+            driver.find_element_by_name('password').send_keys(PASSWORD) # 비밀번호 입력
+            driver.find_element_by_id('passwordNext').click() # 다음버튼
+            
+            # 받은편지함 나올때 까지 대기. 실패할경우 로그인 재시도.
+            try:
+                WebDriverWait(driver, 5).until(EC.title_contains(('받은편지함'))) # 받은 편지함 로딩 대기
+            except:
+                print("Login failed. Retrying...") # 로그인 실패
+                PASSWORD = input("password : ") # 비밀번호 재입력
+                continue
+            session_Login = True # 로그인 성공 세션 저장
+        else:
+            driver.get(GMAIL) # 메일함 이동
+            WebDriverWait(driver, 5).until(EC.title_contains(('받은편지함'))) # 받은 편지함 로딩 대기
 
-    driver.find_element_by_name('password').send_keys(PASSWORD) # 비밀번호 입력
-    driver.find_element_by_id('passwordNext').click() # 다음버튼
-    driver.implicitly_wait(5) # 로딩 최대 5초 기다리기
-
-    # 받은편지함 나올때 까지 최대 10초 대기.
-    WebDriverWait(driver, 10).until(EC.title_contains(('받은편지함')))
-
-    # 이메일 크롤링
-    text_source = driver.page_source
-    email_soup = BeautifulSoup(text_source,"html.parser")
-    emails = email_soup.find_all("div",{"class":"xT"})
-    for email in emails:
-        title = email.find("div",{"class":"y6"}).get_text()
-        if (title == "Log in Nomad Challenges"):
-            body = email.find("span",{"class":"y2"}).get_text()
-            LOGIN_URL = body[body.find(':')+2:body.find('on your browser.')]
+        # 메일함 목록에 메일이 없을 때 예외처리
+        try:
+            print("모든 이메일 확인중")
+            emails = driver.find_elements_by_class_name("xT") # 모든 이메일 확인
+            for email in emails: # 노마드코더에서 온 가장 최근의 로그인 이메일 리스트 열기
+                if(email.find_element_by_class_name("y6").text=="Log in Nomad Challenges"):
+                    email.click()
+                    break
+        except: # 이메일 존재 유무 예외처리
+            print("이메일 아예 없어용")
+            continue
+        
+        # 로그인 이메일 리스트 로딩 대기
+        try:
+            print("이메일 로딩 기다려욤")
+            WebDriverWait(driver, 3).until(EC.title_contains(('Log in Nomad Challenges')))
+        except:
+            print("에러 : 메일 없음 or [로딩 3초 초과]")
+            continue
+        
+        # 이메일 크롤링
+        print("이메일 크롤링해욤")
+        text_source = driver.page_source
+        email_soup = BeautifulSoup(text_source,"html.parser")
+        emails = email_soup.find("div",{"role":"list"}).find_all("div",{"role":"listitem"})
+        for email in emails:
+            body = email.text
+            url = body.rfind('this:')+6
+            LOGIN_URL = body[url:url+79]
+        if(LOGIN_URL!=""):
             break
-    
-    # 로그인 URL로 이동하기
-    driver.get(LOGIN_URL)
+    print(LOGIN_URL)
+    return LOGIN_URL
+
+def linkToPage(Challenge):
+
+    # 이메일에서 로그인 URL을 받아와서 이동
+    global driver
+    driver.get(getEmail())
 
     #Progress Report 접속
     driver.get(f"https://challenges.nomadcoders.co/challenges/{Challenge}/report")
@@ -143,7 +208,8 @@ def checkList():
     print()
 
 SetLogin()
-html = linkToPage(CHALLENGE)
-addToList(html)
+excuteDriver()
+sendEmail()
+getData()
 printList()
 checkList()
