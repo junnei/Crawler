@@ -21,17 +21,17 @@ LOGIN_URL = ""
 
 # 파이썬 챌린지 : 5
 # JS 챌린지 : 4
-CHALLENGE = 4
+CHALLENGE = 5
 
 # 처음 참가자 수
 # 파이썬 챌린지 : 598
 # JS 챌린지 : 784
-MAX = 784
+MAX = 598
 
 # 챌린지 시작 날짜
 # 파이썬 챌린지 : 2020년 4월 13일 6시
 # JS 챌린지 : 2020년 4월 20일 6시
-DATE = datetime.datetime(2020, 4, 20, 6)
+DATE = datetime.datetime(2020, 4, 13, 6)
 
 # 현재 참가자 수
 participants=0
@@ -213,7 +213,7 @@ def cvsPrint():
     # csv 파일 출력
     try:
         f = open(f"result{CHALLENGE}.csv",'r')
-        day = f.readlines()[-1][0]
+        day = int(f.readlines()[-1][0])
         f.close()
     except:
         f = open(f"result{CHALLENGE}.csv",'w', newline='')
