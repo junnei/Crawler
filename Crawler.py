@@ -48,12 +48,34 @@ session_Login = False
 # 크롬드라이버 선언
 driver = webdriver.chrome.webdriver.WebDriver
 
+def setChallenge():
+    global CHALLENGE
+    global MAX
+    global DATE
+    while True:
+        print("JS : 4 / Python : 5")
+        mode = input("Challenge : ")
+        if( mode == '4'):
+            CHALLENGE = 4
+            MAX = 784
+            DATE = datetime.datetime(2020, 4, 20, 6)
+            break
+        elif( mode == '5'):
+            CHALLENGE = 5
+            MAX = 598
+            DATE = datetime.datetime(2020, 4, 13, 6)
+            break
+        else:
+            continue
+
 # 로그인을 위한 데이터 입력
 def SetLogin():
     print("\t< Gmail Login >")
     global EMAIL_ADDRESS
     global PASSWORD
-    EMAIL_ADDRESS = input("email : ")
+    EMAIL_ADDRESS = input("email or ID : ")
+    if (EMAIL_ADDRESS.find("@")== -1):
+        EMAIL_ADDRESS = EMAIL_ADDRESS + "@gmail.com"
     PASSWORD = input("password : ")
 
 # 크롬드라이버 실행
@@ -245,6 +267,7 @@ def checkList():
                 print(f"\tAssignment {j} : {data[i][j]}")
     print()
 
+setChallenge()
 SetLogin()
 excuteDriver()
 sendEmail()
