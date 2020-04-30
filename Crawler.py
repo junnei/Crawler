@@ -207,7 +207,7 @@ def printList():
         print(f"# {i} \t{data[i][0]} :",end="")
         for j in range(1,len(data[i])):
             print(" ",end="")
-            if(data[i][j].find("repl")!=-1):
+            if(data[i][j].find("io")!=-1):
                 print("O",end="")
             else:
                 if(data[i][j]=="X"):
